@@ -21,6 +21,12 @@ abstract class _LoginStore with Store {
   @action
   void togglePasswordVisibility() => passwordVisible = !passwordVisible;
 
+  @observable
+  bool loading = false;
+
+  @observable
+  bool loggedIn = false;
+
   @computed
   bool get isEmailValid =>
       RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
@@ -29,5 +35,16 @@ abstract class _LoginStore with Store {
   bool get isPasswordValid => password.length >= 6;
 
   @computed
-  bool get isFormValid => isEmailValid && isPasswordValid;
+  Function get loginPressed =>
+      (isEmailValid && isPasswordValid && !loading) ? login : null;
+
+  @action
+  Future login() async {
+    loading = true;
+
+    await Future.delayed(Duration(seconds: 2));
+
+    loading = false;
+    loggedIn = true;
+  }
 }
